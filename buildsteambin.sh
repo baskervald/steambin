@@ -1,7 +1,8 @@
 #!/bin/bash
 
-DIR=~/.steam/steam/steamapps
-STEAMBIN_DIR=~/.steambin
+steamapps_dir=${STEAMAPPS_DIR:-~/.local/share/Steam/steamapps}
+steambin_dir=${STEAMBIN_DIR:-~/.steambin}
+steam_cmd=${STEAM_CMD:-steam}
 
 parse_acf () {
   appid=
@@ -22,10 +23,10 @@ parse_acf () {
 }
 
 make_executable () {
-  file=$STEAMBIN_DIR/$1
+  file=$steambin_dir/$1
   echo '#!/bin/sh' > $file
-  echo "steam steam://run/$2" >> $file
-  echo "$2 $1" >> $STEAMBIN_DIR/.games
+  echo "$steam_cmd steam://run/$2" >> $file
+  echo "$2 $1" >> $steambin_dir/.games
   chmod +x $file
 }
 
@@ -34,7 +35,7 @@ handle_file () {
   make_executable ${container[0]} ${container[1]}
 }
 
-rm $STEAMBIN_DIR/*
-for file in $DIR/appmanifest_*.acf; do
+rm $steambin_dir/*
+for file in $steamapps_dir/appmanifest_*.acf; do
   handle_file $file
 done
